@@ -51,7 +51,7 @@ shared variable mem:tmem;
 shared variable breceiving:std_logic:='0';							    -- receiving data (hight level)
 shared variable scl_L:std_logic:='0';								  	-- previous value scl
 shared variable sda_L:std_logic:='0';									-- previous value sda
-shared variable ack:std_logic:='0';										-- –азрешение формаровани€ сигнала подтверждени€
+shared variable ack:std_logic:='0';										-- acknowledge signal
 shared variable r:std_logic:='0';									-- writing by slave data to i2c (hight level), reading by slave data from i2c (low lewel)
 shared variable s:std_logic:='0';									    -- skipping scl front for next correct reception
 shared variable adr:std_logic:='1';										-- adress receiving (i2c hight level)
