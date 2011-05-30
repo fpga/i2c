@@ -32,83 +32,83 @@ use ieee.std_logic_arith.all;
 entity Test_block is
 	    port   (
             clk      : in  std_logic;                    	-- clock 
-            rst      : in  std_logic ;      		        		-- reset            
-            adr_o      : out  std_logic_vector(2 downto 0); -- Адрес регистра в ядре
-            dat_o      : out std_logic_vector(7 downto 0); 	-- Данные для запись в регистр ядра
-            we       : out  std_logic;                    	-- Разрешение записи
-            stb      : out  std_logic                    	-- Выбор ядра
+            rst      : in  std_logic ;      		        -- reset            
+            adr_o      : out  std_logic_vector(2 downto 0); -- register adress
+            dat_o      : out std_logic_vector(7 downto 0); 	-- data
+            we       : out  std_logic;                    	-- write enabling
+            stb      : out  std_logic                    	-- strobe - core select
     );
 
 end Test_block;
 
 architecture Behavioral of Test_block is
 
-constant data_len:integer:=27;					-- Длина массива данных для тестирования
+        constant data_len:integer:=27;					-- data lenght
 
 type tdata is array (0 to data_len-1) of integer;
 type tbit is array (0 to data_len-1) of std_logic;
 
-constaNT data:tdata:=( 			99,0,128,		-- инициализация 
-										162,144,0,		-- отправка адреса slave с записью
-										12,16,0,			-- отправка адреса памяти
-										162,144,0,		-- отправка адреса slave с запись
-										172,16,0,		-- отправка данных в память										
-										162,144,0,		-- отправка адреса slave с записью
-										12,16,0,			-- отправка адреса памяти
-										163,144,0,		-- отправка адреса slave с чтением
-										8,104,0 			-- чтение данных
+constaNT data:tdata:=( 		        	99,0,128,		-- initialization
+										162,144,0,		-- slave adress with write
+										12,16,0,		-- memory adress
+										162,144,0,		-- slave adress with write
+										172,16,0,		-- data writing									
+										162,144,0,		-- slave adress with write
+										12,16,0,		-- memory adress
+										163,144,0,		-- slave adress with read
+										8,104,0 		-- data reading
 													);
 													
-constant adr:tdata:=( 		  	0,1,2,			-- инициализация
-										3,4,4,			-- отправка адреса slave с записью
-										3,4,4,			-- отправка адреса памяти
-										3,4,4,			-- отправка адреса slave с записью
-										3,4,4,			-- отправка данных в память	
-										3,4,4,			-- отправка адреса slave с записью
-										3,4,4,			-- отправка адреса памяти
-										3,4,4,			-- отправка адреса slave с чтением
-										3,4,4 			-- чтение данных								
+constant adr:tdata:=( 		        	0,1,2,			-- initialization
+										3,4,4,			-- slave adress with write
+										3,4,4,			-- memory adress
+										3,4,4,			-- slave adress with write
+										3,4,4,			-- data writing
+										3,4,4,			-- slave adress with write
+										3,4,4,			-- memory adress
+										3,4,4,			-- slave adress with read
+										3,4,4 			-- data reading								
 									  
 
 													);
 
-constant smd:tdata:=( 		  	2,2,2,			-- инициализация
-										2,2,5730,		-- отправка адреса slave с записью
-										2,2,5730,		-- отправка адреса памяти
-										2,2,5730,		-- отправка адреса slave с записью
-										2,2,5730,		-- отправка данных в память	
-										2,2,5730,		-- отправка адреса slave с записью
-										2,2,5730,		-- отправка адреса памяти
-										2,2,5730,		-- отправка адреса slave с чтением										
-										2,2,6557			-- чтение данны
+constant smd:tdata:=( 		        	2,2,2,			-- initialization
+										2,2,5730,		-- slave adress with write
+										2,2,5730,		-- memory adress
+										2,2,5730,		-- slave adress with write
+										2,2,5730,		-- data writing
+										2,2,5730,		-- slave adress with write
+										2,2,5730,		-- memory adress
+										2,2,5730,		-- slave adress with read			
+										2,2,6557		-- data reading 
 													);
 
-constant wed:tbit:=(				'1','1','1',	-- инициализация
-										'1','1','0',	-- отправка адреса slave с записью
-										'1','1','0',	-- отправка адреса памяти
-										'1','1','0',	-- отправка адреса slave с записью
-										'1','1','0',	-- отправка данных в память
-										'1','1','0',	-- отправка адреса slave с записью
-										'1','1','0',	-- отправка адреса памяти
-										'1','1','0',	-- отправка адреса slave с чтением									
-										'1','1','0'		-- чтение данных
+constant wed:tbit:=(			    	'1','1','1',	-- initialization
+										'1','1','0',	-- slave adress with write
+										'1','1','0',	-- memory adress
+										'1','1','0',	-- slave adress with write
+										'1','1','0',	-- data writing
+										'1','1','0',	-- slave adress with write
+										'1','1','0',	-- memory adress
+										'1','1','0',	-- slave adress with read									
+										'1','1','0'		-- data reading
 													);
 
-constant stbd:tbit:=(			'1','1','1',	-- инициализация
-										'1','1','0',	-- отправка адреса slave с записью
-										'1','1','0',	-- отправка адреса памяти
-										'1','1','0',	-- отправка адреса slave с записью
-										'1','1','0',	-- отправка данных в память
-										'1','1','0',	-- отправка адреса slave с записью
-										'1','1','0',	-- отправка адреса памяти
-										'1','1','0',	-- отправка адреса slave с чтением										
-										'1','1','0'		-- чтение данных
+constant stbd:tbit:=(		        	'1','1','1',	-- initialization
+										'1','1','0',	-- slave adress with write
+                                        '1','1','0',	-- memory adress
+										'1','1','0',	-- slave adress with write
+                                        '1','1','0',	-- data writing
+										'1','1','0',	-- slave adress with write
+										'1','1','0',	-- memory adress
+										'1','1','0',	-- slave adress with reade										
+										'1','1','0'		-- data reading
 													);
 													
-shared variable n:std_logic:='1';				-- загрузка новых данных из массива
-shared variable s:integer:=0;						-- счетчи
-shared variable sm:integer range 0 to 8191:=0;-- время установления следующих данных
-shared variable c:integer:=0;						-- текущая позиция в массиве данных
+shared variable n:std_logic:='1';				-- load new data from array
+shared variable s:integer:=0;				    -- counter
+shared variable sm:integer range 0 to 8191:=0;  -- time for new data
+shared variable c:integer:=0;				    -- place in array
 begin
 	process (clk,rst)
 	begin
@@ -121,7 +121,7 @@ begin
 			c:=0;
 --		elsif (clk'event and clk='0') then
 		
--- Загрузка новых данных из массива			
+-- transfer new data from array			
 --	if (n='1')then
 				sm:=smd(c);
 				adr_o<=conv_std_logic_vector(adr(c),3);
@@ -131,11 +131,11 @@ begin
 				n:='0';
 			c:=c+1;				
 				if (c=data_len)then 
--- Переход в начало массива данных, после его окончания
+-- in the beginning of the array after end 
 					c:=0;
 			--	end if;
 			end if;			
--- Ожидание следующей загрузки данных из массива			
+-- wait for new	transfer from array		
 			s:=s+1;	
 			if (s=sm)then 
 				s:=0;
